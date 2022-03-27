@@ -6,17 +6,17 @@ import (
 
 var connection = database.GetConnection()
 
-func GetPostById(id int) (Post, error) {
+func GetPostById(id int) Post {
 
 	var post Post
 
-	err := connection.QueryRow("SELECT * FROM posts WHERE id = ?", id).Scan(&post.Id, &post.Title, &post.Content, &post.Image, &post.Status)
+	err := connection.QueryRow("SELECT * FROM posts WHERE id = ?", id).Scan(&post.Id, &post.Title, &post.Content, &post.Image, &post.Status, &post.Created)
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	return post, nil
+	return post
 }
 
 func GetAllPosts() []Post {
@@ -44,4 +44,26 @@ func GetAllPosts() []Post {
 	}
 
 	return post
+}
+
+func CreatePost(post Post) Post {
+
+	result, err := connection.Exec("INSERT INTO posts (title, content, image, status) VALUES (?, ?, ?, ?)", post.Title, post.Content, post.Image, post.Status)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	id, err := result.LastInsertId()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	newId := int(id)
+
+	post.Id = &newId
+
+	return post
+
 }

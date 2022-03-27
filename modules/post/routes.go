@@ -6,7 +6,10 @@ func InitRoutes(route *gin.Engine) {
 
 	postsGroup := route.Group("api/v1")
 	{
-		postsGroup.GET("/posts", GetPosts)
+		postsGroup.GET("/posts/:id", GetPostController)
+		postsGroup.GET("/posts", GetPostsController)
+
+		postsGroup.POST("/posts", CreatePostController)
 	}
 
 }

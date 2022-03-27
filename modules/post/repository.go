@@ -1,6 +1,8 @@
 package post
 
 import (
+	"errors"
+
 	"go.fedejuret.blog/modules/database"
 )
 
@@ -65,5 +67,37 @@ func CreatePost(post Post) Post {
 	post.Id = &newId
 
 	return post
+
+}
+
+func UpdatePost(postId int, post Post) (Post, error) {
+
+	result, err := connection.Exec("UPDATE posts SET title = ?, content = ?, image = ?, status = ? WHERE id = ?", post.Title, post.Content, post.Image, post.Status, postId)
+
+	if err != nil {
+		return Post{}, err
+	}
+
+	if rows, _ := result.RowsAffected(); rows != 1 {
+		return Post{}, errors.New("Post not found")
+	}
+
+	return GetPostById(postId), nil
+
+}
+
+func DeletePost(id int) (bool, error) {
+
+	result, err := connection.Exec("DELETE FROM posts WHERE id = ?", id)
+
+	if err != nil {
+		return false, err
+	}
+
+	if rows, _ := result.RowsAffected(); rows != 1 {
+		return false, errors.New("Post not found")
+	}
+
+	return true, nil
 
 }

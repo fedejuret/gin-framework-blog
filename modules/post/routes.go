@@ -10,6 +10,9 @@ func InitRoutes(route *gin.Engine) {
 		postsGroup.GET("/posts", GetPostsController)
 
 		postsGroup.POST("/posts", CreatePostController)
+		postsGroup.PUT("/posts/:id", UpdatePostController)
+
+		postsGroup.DELETE("/posts/:id", DeletePostController)
 	}
 
 }
